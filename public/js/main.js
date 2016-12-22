@@ -20449,52 +20449,161 @@ module.exports = require('./lib/React');
 
 },{"./lib/React":155}],178:[function(require,module,exports){
 var React = require('react');
-var ListItem = require('./ListItem.jsx');
 
-var ingredients = [{ "id": 1, "text": "ham" }, { "id": 2, "text": "cheese" }, { "id": 3, "text": "bread" }];
-var List = React.createClass({
-	displayName: 'List',
-
-	render: function () {
-		var listItems = ingredients.map(function (item) {
-			return React.createElement(ListItem, { key: item.id, ingredient: item.text });
-		});
-
-		return React.createElement(
-			'ul',
-			null,
-			listItems
-		);
-	}
-});
-
-module.exports = List;
-
-},{"./ListItem.jsx":179,"react":177}],179:[function(require,module,exports){
-var React = require('react');
-var ListItem = React.createClass({
-	displayName: 'ListItem',
+var bTitleStyle = {
+	fontSize: 18
+};
+var bTextStyle = {
+	fontSize: 16
+};
+var BlockContent = React.createClass({
+	displayName: "BlockContent",
 
 	render: function () {
 		return React.createElement(
-			'li',
+			"div",
 			null,
 			React.createElement(
-				'h4',
-				null,
-				this.props.ingredient
+				"h2",
+				{ className: "text-center", style: bTitleStyle },
+				this.props.blockTitle
+			),
+			React.createElement(
+				"p",
+				{ className: "text-center", style: bTextStyle },
+				this.props.blockText
 			)
 		);
 	}
 });
 
-module.exports = ListItem;
+module.exports = BlockContent;
 
-},{"react":177}],180:[function(require,module,exports){
+},{"react":177}],179:[function(require,module,exports){
+var React = require('react');
+var ImageBlock = require('./ImageBlock.jsx');
+var BlockContent = require('./BlockContent.jsx');
+var ButtonBlock = require('./ButtonBlock.jsx');
+
+var blockStyle = {
+	borderStyle: 'solid',
+	borderWidth: 1,
+	borderColor: '#eeeeee'
+},
+    innerBlock = {
+	position: 'relative'
+};
+var BlockWrapper = React.createClass({
+	displayName: 'BlockWrapper',
+
+	render: function () {
+		return React.createElement(
+			'div',
+			{ className: 'col-sm-6 col-md-4 col-lg-3' },
+			React.createElement(
+				'div',
+				{ style: blockStyle },
+				React.createElement(
+					'div',
+					{ className: 'hoverSelector', style: innerBlock },
+					React.createElement(ButtonBlock, { viewBtnUrl: this.props.viewBtnUrl, exploreBtnUrl: this.props.exploreBtnUrl }),
+					React.createElement(ImageBlock, { imageUrl: this.props.imageUrl })
+				),
+				React.createElement(BlockContent, { blockTitle: this.props.blockTitle, blockText: this.props.blockText })
+			)
+		);
+	}
+});
+
+module.exports = BlockWrapper;
+
+},{"./BlockContent.jsx":178,"./ButtonBlock.jsx":180,"./ImageBlock.jsx":181,"react":177}],180:[function(require,module,exports){
+var React = require('react');
+
+var buttonStyle = {
+	backgroundColor: '#ffffff',
+	borderWidth: 1,
+	borderStyle: 'solid',
+	borderColor: '#222222',
+	borderRadius: 4,
+	marginRight: 2
+};
+var ButtonBlock = React.createClass({
+	displayName: 'ButtonBlock',
+
+	render: function () {
+		return React.createElement(
+			'div',
+			{ className: 'buttonWrapper' },
+			React.createElement(
+				'a',
+				{ href: this.props.viewBtnUrl },
+				React.createElement(
+					'button',
+					{ style: buttonStyle },
+					'View'
+				)
+			),
+			React.createElement(
+				'a',
+				{ href: this.props.exploreBtnUrl },
+				React.createElement(
+					'button',
+					{ style: buttonStyle },
+					'Explore'
+				)
+			)
+		);
+	}
+});
+
+module.exports = ButtonBlock;
+
+},{"react":177}],181:[function(require,module,exports){
+var React = require('react');
+
+var imgBlockStyle = {
+	margin: 0
+};
+var ImageBlock = React.createClass({
+	displayName: "ImageBlock",
+
+	render: function () {
+		return React.createElement(
+			"div",
+			null,
+			React.createElement("img", { style: imgBlockStyle, src: this.props.imageUrl, className: "img-responsive center-block" })
+		);
+	}
+});
+
+module.exports = ImageBlock;
+
+},{"react":177}],182:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
-var List = require('./components/List.jsx');
+var ImageBlock = require('./components/ImageBlock.jsx');
+var BlockContent = require('./components/BlockContent.jsx');
+var BlockWrapper = require('./components/BlockWrapper.jsx');
 
-ReactDOM.render(React.createElement(List, null), document.getElementById('ingredients'));
+//dataFromServer can be considered as data source from server
+var Main = React.createClass({
+	displayName: 'Main',
 
-},{"./components/List.jsx":178,"react":177,"react-dom":26}]},{},[180]);
+
+	dataFromServer: [{ id: 1, image: "http://lorempixel.com/400/400/", blockTitle: "Sample Title", blockText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit", viewBtnUrl: "http://www.example.com", exploreBtnUrl: "http://www.hotmail.com" }, { id: 2, image: "http://lorempixel.com/400/400/", blockTitle: "Random Text", blockText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit", viewBtnUrl: "http://www.bitbucket.com", exploreBtnUrl: "http://www.yahoo.com" }, { id: 3, image: "http://lorempixel.com/400/400/", blockTitle: "Vague Title", blockText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit", viewBtnUrl: "http://www.myntra.com", exploreBtnUrl: "http://www.wikipedia.com" }, { id: 4, image: "http://lorempixel.com/400/400/", blockTitle: "Normal Title", blockText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit", viewBtnUrl: "http://www.flipkart.com", exploreBtnUrl: "http://www.gmail.com" }],
+
+	render: function () {
+		var gridList = this.dataFromServer.map(function (list) {
+			return React.createElement(BlockWrapper, { key: list.id, imageUrl: list.image, blockTitle: list.blockTitle, blockText: list.blockText, viewBtnUrl: list.viewBtnUrl, exploreBtnUrl: list.exploreBtnUrl });
+		});
+		return React.createElement(
+			'div',
+			null,
+			gridList
+		);
+	}
+});
+ReactDOM.render(React.createElement(Main, null), document.getElementById('app'));
+
+},{"./components/BlockContent.jsx":178,"./components/BlockWrapper.jsx":179,"./components/ImageBlock.jsx":181,"react":177,"react-dom":26}]},{},[182]);
